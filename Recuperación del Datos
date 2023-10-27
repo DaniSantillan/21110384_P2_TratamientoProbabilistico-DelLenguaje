@@ -1,0 +1,35 @@
+import nltk
+from nltk.corpus import reuters
+from nltk.probability import FreqDist
+
+# Descargar recursos necesarios
+nltk.download('reuters')
+nltk.download('punkt')
+
+# Obtener documentos de ejemplo (Reuters corpus)
+document_ids = reuters.fileids()
+documents = [reuters.raw(doc_id) for doc_id in document_ids]
+
+# Tokenizar los documentos
+tokenized_docs = [nltk.word_tokenize(doc.lower()) for doc in documents]
+
+# Calcular la frecuencia de las palabras
+word_freq = FreqDist([word for doc in tokenized_docs for word in doc])
+
+# Calcular la probabilidad de ocurrencia de una palabra específica
+def calculate_word_probability(word):
+    return word_freq.freq(word)
+
+# Ejemplo de palabra clave
+keyword = 'economy'
+
+# Calcular la probabilidad de que un documento sea relevante
+def calculate_document_probability(doc):
+    doc_words = nltk.word_tokenize(doc.lower())
+    doc_probability = sum([calculate_word_probability(word) for word in doc_words]) / len(doc_words)
+    return doc_probability
+
+# Filtrar documentos relevantes basándose en la probabilidad
+relevant_documents = [doc_id for doc_id, doc in zip(document_ids, documents) if calculate_document_probability(doc) > 0.01]
+
+print("Documentos relevantes:", relevant_documents)
