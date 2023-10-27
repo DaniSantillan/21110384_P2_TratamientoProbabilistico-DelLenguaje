@@ -1,0 +1,30 @@
+import nltk
+import random
+
+# Oraciones de ejemplo para entrenar el modelo
+corpus = [
+    ("I love natural language processing", "Me encanta el procesamiento del lenguaje natural"),
+    ("Machine learning is fascinating", "El aprendizaje automático es fascinante"),
+    # Agrega más pares de oraciones según sea necesario
+]
+
+# Tokeniza las oraciones
+tokenized_corpus = [(nltk.word_tokenize(src), nltk.word_tokenize(target)) for src, target in corpus]
+
+# Entrenamiento del modelo de lenguaje n-gram
+n = 2  # Puedes ajustar n-gram según sea necesario
+model = nltk.translate.ngram.NgramModel(n, tokenized_corpus)
+
+# Función para traducir una oración utilizando el modelo
+def translate(sentence):
+    src_tokens = nltk.word_tokenize(sentence)
+    translated_tokens = model.translate(src_tokens)
+    translated_sentence = ' '.join(translated_tokens)
+    return translated_sentence
+
+# Ejemplo de uso
+input_sentence = "I love working with language models"
+output_sentence = translate(input_sentence)
+
+print("Input:", input_sentence)
+print("Translated:", output_sentence)
