@@ -1,0 +1,32 @@
+import nltk
+from nltk import CFG
+from nltk.probability import MLEProbDist
+from nltk.corpus import treebank
+
+# Descargar el corpus treebank si no lo tienes
+nltk.download('treebank')
+
+# Obtener las producciones del corpus treebank
+productions = []
+for sent in treebank.parsed_sents():
+    productions += sent.productions()
+
+# Definir la gramática a partir de las producciones
+grammar = CFG.fromstring("""
+    S -> NP VP
+    NP -> Det N
+    VP -> V NP
+    Det -> 'the' | 'a'
+    N -> 'dog' | 'cat'
+    V -> 'chased' | 'ate'
+""")
+
+# Entrenar el modelo de probabilidad basado en las producciones
+prob_dist = MLEProbDist(productions)
+
+# Crear el parser probabilístico
+parser = nltk.ViterbiParser(grammar, prob_dist)
+
+# Generar una oración aleatoria
+for tree in parser.parse(grammar.start()):
+    print(tree.leaves())
